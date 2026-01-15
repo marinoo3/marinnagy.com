@@ -1,2 +1,2 @@
 # marinnagy.com
-Personal website
+Personal website, available at [marinnagy.com](https://marinnagy.com)
