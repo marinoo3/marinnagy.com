@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Sanchez&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="terminal.css">
 </head>
 
 <body>
@@ -22,7 +23,7 @@
                 <h1>Marin Nagy</h1>
                 <div>
                     <p>
-                        👋🏼 Je m'appelle Marin et je suis actuellement en dernière année d'un master en science des données [SISE]. Je suis passioné par la création numérique et la programmation. 
+                        👋🏼 Je m'appelle Marin et je suis actuellement en dernière année d'un master en science des données [SISE]. Je suis passionné par la création numérique et la programmation. 
                         J'ai un fort intérêt pour le NLP, la computer vision et l'automatisation.
                     </p>
                 </div>
@@ -42,19 +43,19 @@
             <ul>
                 <li>
                     <pre><a href="https://marinooo-naturaljob-app.hf.space">Natural JOB</a></pre>
-                    - Application de recherche d'emploi propulsée par NLP et LLM.
+                    - Application de recherche d'emploi propulsée par NLP et LLM
                 </li>
                 <li>
                     <pre><a href="https://github.com/marinoo3/SecondeMain">Seconde Main</a></pre>
-                    - Système de gestion des produits pour une TPE.
+                    - Système de gestion des produits pour une TPE
                 </li>
                 <li>
                     <pre><a href="https://github.com/marinoo3/m2_enedis">France Energie</a></pre>
-                    - Collecte massive de donnée et API REST.
+                    - Collecte massive de données et API REST
                 </li>
                 <li>
                     <pre><a href="https://fcpxstudio.com/products/depth-transitions">Depth Transition</a></pre>
-                    - Développement d'une extension, modèle de computer vision.
+                    - Développement d'une extension, modèle de computer vision
                 </li>
                 <li>
                     <pre><a href="https://fcpxstudio.com/products/pfixer">pFixer</a></pre>
@@ -66,30 +67,46 @@
             <div class="header">
                 <div class="title">
                     <img src="resources/ico.png" alt="" height="16px">
-                    <h3>Posez moi une question</h3>
+                    <h3>me.exe</h3>
                 </div>
                 <ul class="actions">
                     <li id="minimize">
-                        <img src="resources/minimize.png" alt="" height="25px">
+                        <img src="resources/minimize.png" alt="" height="23px">
                     </li>
                     <li id="maximize">
-                        <img src="resources/maximize.png" alt="" height="25px">
+                        <img src="resources/maximize.png" alt="" height="23px">
                     </li>
                     <li id="close">
-                        <img src="resources/close.png" alt="" height="25px">
+                        <img src="resources/close.png" alt="" height="23px">
                     </li>
                 </ul>
             </div>
             <div class="content">
                 <ul class="menu">
-                    <li id="file">File</li>
-                    <li id="edit">Edit</li>
+                    <li id="file">File
+                        <ul class="elements">
+                            <li>Search</li>
+                            <div class="sep"></div>
+                            <li>Save json</li>
+                            <li>Save txt</li>
+                        </ul>
+                    </li>
+                    <li id="edit">Edit
+                        <ul class="elements">
+                            <li>Clear messages</li>
+                        </ul>
+                    </li>
                     <li id="about">About</li>
                 </ul>
                 <div class="viewer">
                     <div class="text">
-                        <textarea name="context" id="context"></textarea>
-                        <textarea name="prompt" id="prompt"></textarea>
+                        <ul class="messages">
+                            <li>(marin) ~ Posez-moi une question</li>
+                        </ul>
+                        <div class="query">
+                            <label for="prompt">></label>
+                            <input type="text" id="prompt" name="prompt" autocomplete="off">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -97,5 +114,7 @@
     </div>
 
 </body>
+
+<script src="terminal.js"></script>
 
 </html>

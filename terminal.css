@@ -1,0 +1,172 @@
+.terminal {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    padding: 2px;
+    background-color: rgb(8, 49, 217);
+    border: solid 2px #012e7e;
+    border-radius: 12px 12px 2px 2px;
+    overflow: hidden;
+    
+
+    * {
+        text-decoration: none;
+        list-style: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        font-family: "Dogica Pixel";
+        font-weight: 400;
+        font-size: 10px;
+        user-select: none;
+        outline: none;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(rgb(0, 88, 238) 0%, rgb(53, 147, 255) 4%, rgb(40, 142, 255) 6%, rgb(18, 125, 255) 8%, rgb(3, 111, 252) 10%, rgb(2, 98, 238) 14%, rgb(0, 87, 229) 20%, rgb(0, 84, 227) 24%, rgb(0, 85, 235) 56%, rgb(0, 91, 245) 66%, rgb(2, 106, 254) 76%, rgb(0, 98, 239) 86%, rgb(0, 82, 214) 92%, rgb(0, 64, 171) 94%, rgb(0, 48, 146) 100%);
+        margin: -4px -4px 0 -4px;
+        padding: 6px;
+
+        .title > * {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        h3 {
+            color: white;
+            text-shadow: rgb(0, 0, 0) 1px 1px;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0;
+        }
+
+        .actions {
+
+            li {
+                display: inline-block;
+            }
+            li:hover {
+                filter: brightness(1.2);
+            }
+
+            img {
+                image-rendering: pixelated;
+                image-rendering: crisp-edges;
+                display: block;
+            }
+        }
+    }
+
+    .content {
+        background-color: #ece9d8;
+        display: flex;
+        flex-direction: column;
+        border: solid 2px #012e7e;
+
+        .menu {
+            font-size: 0;
+            margin: 2px;
+
+            li {
+                display: inline-block;
+                padding: .4rem;
+                position: relative;
+
+                .elements {
+                    display: none;
+                    position: absolute;
+                    background-color: white;
+                    border: solid 1.5px #aca899;
+                    top: 25px;
+                    left: -1.5;
+                    filter: drop-shadow(4px 4px 2px rgba(0 0 0 / 50%));
+
+                    > li {
+                        color: black;
+                        text-wrap: nowrap;
+                        padding: 6px;
+                        margin: 2px;
+                        width: calc(100% - 4px);
+                    }
+
+                    .sep {
+                        height: 1.5px;
+                        width: 100%;
+                        background-color: #dcd7c6;
+                    }
+                }
+            }
+        }
+
+        .menu li:hover {
+            /* background-color: rgba(0 0 0 / 10%); */
+            background-color: #0055e5;
+            color: white !important;
+        }
+        .menu > li.active {
+            background-color: #0055e5;
+            color: white;
+            position: relative;
+
+            .elements {
+                display: block;
+            }
+        }
+
+        .viewer {
+            padding: 6px;
+            border: solid 1px #716f64;
+            outline: solid 1px #aca899;
+            margin: 1px;
+        }
+
+        .text {
+            background-color: white;
+            height: 220px;
+            border: solid 1px black;
+            outline: solid 2px white;
+            outline-offset: 2px;
+            box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.3);
+            padding: 6px;
+
+            ul.messages > li {
+                margin-bottom: 4px;
+            }
+            
+            .query {
+                display: flex;
+                gap: 2px;
+
+                input#prompt {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+.terminal.minimized {
+    top: 0 !important;
+    left: 50% !important;
+    transform: translate(-50%, calc(100vh - 40px));
+    width: 40%;
+
+    .content {
+        display: none;
+    }
+}
+
+.terminal.maximized {
+    width: 95vw;
+    left: 50% !important;
+    top: 5% !important;
+
+    .viewer .text {
+        height: calc(95vh - 90px);
+    }
+}
