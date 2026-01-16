@@ -1,0 +1,190 @@
+@font-face {
+    font-family: 'Dogica Pixel';
+    src: url('resources/fonts/dogicapixel.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Dogica Pixel';
+    src: url('resources/fonts/dogicapixelbold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+
+* {
+    box-sizing: inherit;
+    font-family: "Sanchez";
+}
+
+html {
+    box-sizing: border-box;
+}
+
+body {
+    min-width: 500px;
+    margin: 0;
+}
+
+h1 {
+    margin: 0;
+}
+
+ul {
+    padding-inline-start: 1rem;
+}
+
+.projects pre {
+    display: inline;
+}
+
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 44rem;
+    padding: 2.625rem 1.3125rem;
+    min-height: 100vh;
+}
+
+.header {
+    display: grid;
+    grid-template-columns: 120px auto;
+    grid-gap: 1rem;
+    font-family: Sanchez;
+}
+
+.pic {
+    width: 120px;
+    border-radius: 50%;
+}
+
+.nicar23 {
+    background-color: #fff3cd;
+    border: 1px solid #ffecb5;
+    border-radius: 0.5rem;
+    margin-top: 1.5rem;
+    font-family: Sanchez;
+}
+
+.nicar23 ul {
+    padding-inline-start: 0;
+}
+
+.projects {
+    font-family: Sanchez;
+}
+
+
+
+/* Terminal */
+
+.terminal {
+    width: 80%;
+    margin: auto;
+    margin-top: 3rem;
+    padding: .3rem;
+    background-color: #0055e5;
+    border: solid 2px #0043b5;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 12px 12px 2px 2px;
+    background: linear-gradient(180deg, rgba(63, 151, 255, 1) 0%, rgba(0, 85, 234, 1) 10%, rgba(0, 96, 252, 1) 18%);
+
+    * {
+        text-decoration: none;
+        list-style: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        font-family: "Dogica Pixel";
+        font-weight: 400;
+        font-size: 10px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px;
+        padding-bottom: 8px;
+        box-shadow: inset 0 -10px 10px -10px rgba(0, 0, 0, 0.6);
+
+        .title > * {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        h3 {
+            color: white;
+            filter: drop-shadow(1px 1px 0px rgba(0 0 0 / 50%));
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0;
+        }
+
+        .actions {
+
+            li {
+                display: inline-block;
+            }
+
+            img {
+                image-rendering: pixelated;
+                image-rendering: crisp-edges;
+                display: block;
+            }
+        }
+    }
+
+    .content {
+        background-color: #ece9d8;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        border: solid 2px #012e7e;
+
+        .menu {
+            padding: .5rem;
+        }
+        .menu > li {
+            display: inline-block;
+            margin-right: 12px;
+        }
+
+        .viewer {
+            height: 100%;
+            padding: 6px;
+            border: solid 1px #716f64;
+            outline: solid 1px #aca899;
+            margin: 1px;
+        }
+
+        .text {
+            background-color: white;
+            height: 100%;
+            border: solid 1px black;
+            outline: solid 2px white;
+            outline-offset: 2px;
+            box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.3);
+
+            textarea {
+                width: 100%;
+            }
+        }
+    }
+}
+
+
+
+
+
+
+@media only screen and (max-width: 600px) {
+    .header {
+        grid-template-columns: auto;
+        text-align: center;
+    }
+
+    .pic {
+        width: 150px;
+    }
+}
