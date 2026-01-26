@@ -2,8 +2,9 @@ const terminal = document.querySelector('.terminal');
 const titleBar = terminal.querySelector('.header');
 const content = terminal.querySelector('.content');
 const menu = content.querySelector('ul.menu');
-const textContainer = content.querySelector('.viewer');
-const input = textContainer.querySelector('input#prompt');
+const chatbotForm = content.querySelector('form#chatbot');
+const messageList = chatbotForm.querySelector('ul.messages');
+const input = chatbotForm.querySelector('input#prompt');
 
 let isDragging = false;
 
@@ -43,6 +44,13 @@ function onMouseUp() {
     document.removeEventListener('mouseup', onMouseUp);
 };
 
+function addMessage(text, bot=false) {
+    const li = document.createElement('li');
+    const user = bot ? "(marin)" : "(you)";
+    li.textContent = `${user} ~ ${text}`;
+    messageList.appendChild(li);
+}
+
 
 
 
@@ -65,9 +73,9 @@ menu.querySelectorAll(':scope > li').forEach(action => {
 });
 
 // On clicked outside menu items
-content.addEventListener('click', (e) => {
+document.addEventListener('click', (e) => {
     input.focus();
-    if (!e.target.closest('li')) {
+    if (!e.target.closest('.menu li')) {
         unselectMenu();
     }
 });
@@ -98,3 +106,14 @@ titleBar.querySelector('#maximize').addEventListener('click', () => {
     terminal.classList.remove('minimized');
     terminal.classList.toggle('maximized');
 })
+
+// On chatbot submit
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+chatbotForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    addMessage(input.value);
+    input.value = "";
+    sleep(750).then(() => {
+        addMessage("Mon chat bot est en construction. Revenez dans quelques jours, ou bien envoyez-moi un e-mail !", true);
+    });
+});
