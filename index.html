@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Sanchez&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="terminal.css">
     <link rel="icon" type="image/x-icon" href="resources/favicon.ico">
@@ -70,7 +71,7 @@
         <div class="terminal">
             <div class="header">
                 <div class="title">
-                    <img src="resources/ico.png" alt="" height="16px">
+                    <img src="resources/ico.png" alt="" height="20px">
                     <h3>me.exe</h3>
                 </div>
                 <ul class="actions">
@@ -97,20 +98,24 @@
                     </li>
                     <li id="edit">Edit
                         <ul class="elements">
-                            <li>Clear chat</li>
+                            <li data-action="clear-chat">Clear chat</li>
                         </ul>
                     </li>
                     <li id="about">About
                         <ul class="elements">
-                            <li>View GitHub project</li>
-                            <li>View HF model</li>
+                            <li data-action="github">Project: GitHub</li>
+                            <li data-action="huggingface">API: HuggingFace</li>
                         </ul>
                     </li>
                 </ul>
                 <div class="viewer">
-                    <form class="text" id="chatbot" autocomplete="off">
+                    <form class="text waking" id="chatbot" autocomplete="off">
+                        <div class="loader">
+                            <img src="resources/loader.svg" alt="" height="16px">
+                            <p>Waking up API</p>
+                        </div>
                         <ul class="messages">
-                            <li>(marin) ~ Posez-moi une question</li>
+                            <li class="default">(marin) ~ Posez-moi une question</li>
                         </ul>
                         <div class="query">
                             <label for="prompt">></label>

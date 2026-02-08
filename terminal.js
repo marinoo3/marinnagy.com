@@ -7,14 +7,29 @@ const messageList = chatbotForm.querySelector('ul.messages');
 const input = chatbotForm.querySelector('input#prompt');
 
 let isDragging = false;
+let sessionId = null;
+
+const routeServer = "https://marinooo-me-exe.hf.space";
+const routeAPI = routeServer + "/api";
+
+// Sleep function
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 
 
 
 
+
+// ---------------------- //
+// LOGIC FUNCTIONS
+// ---------------------- //
+
+
+
+// --------------- UI
 
 function unselectMenu() {
-    // Unselect previous and select new
+    // Unselect current menu item
     const selected = menu.querySelector('li.active');
     if (selected) {
         selected.classList.remove('active');
@@ -44,41 +59,95 @@ function onMouseUp() {
     document.removeEventListener('mouseup', onMouseUp);
 };
 
-function addMessage(text, bot=false) {
+
+
+function addMessage(text, bot = false, sources = []) {
     const li = document.createElement('li');
     const user = bot ? "(marin)" : "(you)";
-    li.textContent = `${user} ~ ${text}`;
+    li.innerHTML = `${user} ~ ${sources.length ? `<strong>${sources.length} documents</strong> ` : ''} ${text}`;
     messageList.appendChild(li);
+    // Scroll down to message
+    chatbotForm.scrollTop = chatbotForm.scrollHeight;
+}
+
+async function clearChat() {
+    const messages = messageList.querySelectorAll('li:not(.default)');
+    for (const message of messages) {
+        message.remove();
+        await sleep(50);
+    }
+}
+
+
+// --------------- CHATBOT API
+
+async function pingAPI() {
+    return await fetch(routeServer + '/ping');
+}
+
+async function createBotSession() {
+    const response = await fetch(routeAPI + '/create_session', {
+        method: 'POST'
+    });
+    if (!response.ok) {
+        console.log("Error calling API");
+        return
+    }
+
+    const content = await response.json();
+    return content.session_id
+}
+
+async function clearBotSession() {
+    const response = await fetch(routeAPI + '/clear_session', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            session_id: sessionId
+        })
+    });
+    if (!response.ok) {
+        console.log("Error calling API");
+        return
+    }
+}
+
+async function queryBot(message) {
+    const response = await fetch(routeAPI + '/send', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            query: message,
+            session_id: sessionId
+        })
+    });
+    if (!response.ok) {
+        console.log("Error calling API");
+        return
+    }
+
+    const content = await response.json();
+    return {
+        message: content.response,
+        sources: content.sources
+    }
 }
 
 
 
 
 
+// ---------------------- //
+// EVENT LISTENERS
+// ---------------------- //
 
-// On menu item clicked
-menu.querySelectorAll('li').forEach(action => {
-    action.addEventListener('click', () => {
-        unselectMenu();
-        action.classList.add('active');
-    }); 
-});
-menu.querySelectorAll(':scope > li').forEach(action => {
-    action.addEventListener('mouseenter', (e) => {
-        if (menu.querySelector('li.active')) {
-            unselectMenu();
-            e.target.classList.add('active');
-        }
-    });
-});
 
-// On clicked outside menu items
-document.addEventListener('click', (e) => {
-    input.focus();
-    if (!e.target.closest('.menu li')) {
-        unselectMenu();
-    }
-});
+
+// --------------- Window
 
 // On dragging the window
 titleBar.addEventListener('mousedown', (downEvent) => {
@@ -107,13 +176,93 @@ titleBar.querySelector('#maximize').addEventListener('click', () => {
     terminal.classList.toggle('maximized');
 })
 
+terminal.addEventListener('click', () => {
+    input.focus();
+})
+
+
+
+// --------------- Menu
+
+// On menu item clicked
+menu.querySelectorAll('li').forEach(item => {
+    item.addEventListener('click', (e) => {
+        unselectMenu();
+        if (!e.target.closest('.elements > li')) {
+            item.classList.add('active');
+        }
+    });
+});
+menu.querySelectorAll(':scope > li').forEach(item => {
+    item.addEventListener('mouseenter', (e) => {
+        if (menu.querySelector('li.active')) {
+            unselectMenu();
+            e.target.classList.add('active');
+        }
+    });
+});
+
+// On clicked outside menu items
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.menu li')) {
+        unselectMenu();
+    }
+});
+
+// On menu action click
+menu.querySelectorAll('.elements > li').forEach(button => {
+    switch (button.dataset.action) {
+        case 'clear-chat':
+            button.onclick = () => { clearChat(); clearBotSession(); };
+            break
+        case 'github':
+            button.onclick = () => window.open('https://github.com/marinoo3/me.exe', target='_blank');
+            break
+        case 'huggingface':
+            button.onclick = () => window.open('https://huggingface.co/spaces/marinooo/me.exe', target='_blank');
+            break
+    }
+});
+
+
+
+// --------------- Chatbot
+
 // On chatbot submit
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 chatbotForm.addEventListener('submit', (e) => {
     e.preventDefault();
     addMessage(input.value);
+    queryBot(input.value).then(({ message, sources }) => {
+        if (message) {
+            addMessage(message, true, sources);
+        }
+    })
     input.value = "";
-    sleep(750).then(() => {
-        addMessage("Mon chat bot est en construction. Revenez dans quelques jours, ou bien envoyez-moi un e-mail !", true);
-    });
 });
+
+
+
+
+
+
+
+// ---------------------- //
+// APP INIT
+// ---------------------- //
+
+async function initSession() {
+    response = await pingAPI();
+    if (!response.ok) {
+        // If API sleeping, wait 2 seconds 
+        // and ping again
+        sleep(2000).then(() => {
+            initSession();
+        });
+    } else {
+        sessionId = await createBotSession();
+        chatbotForm.classList.remove('waking');
+        input.focus();
+    }
+}
+
+initSession();
