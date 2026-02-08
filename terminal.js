@@ -6,10 +6,10 @@ const chatbotForm = content.querySelector('form#chatbot');
 const messageList = chatbotForm.querySelector('ul.messages');
 const input = chatbotForm.querySelector('input#prompt');
 
-let isDragging = false;
 let sessionId = null;
 
-const routeServer = "https://marinooo-me-exe.hf.space";
+// const routeServer = "https://marinooo-me-exe.hf.space";
+const routeServer = "http://127.0.0.1:8000";
 const routeAPI = routeServer + "/api";
 
 // Sleep function
@@ -47,23 +47,35 @@ function isAction(element) {
     return false
 }
 
-function onMouseMove(moveEvent, offsetY, offsetX) {
-    if (!isDragging) return;
-    terminal.style.top = `${moveEvent.clientY - offsetY}px`;
-    terminal.style.left = `${moveEvent.clientX - offsetX}px`;
+function onMouseMove(moveEvent, window, offsetY, offsetX) {
+    if (window.dataset.isDragging == 'false') return
+    window.style.top = `${moveEvent.clientY - offsetY}px`;
+    window.style.left = `${moveEvent.clientX - offsetX}px`;
 };
 
-function onMouseUp() {
-    isDragging = false;
+function onMouseUp(window) {
+    window.dataset.isDragging = false;
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
 };
 
-
-
 function addMessage(text, user = 'you', sources = []) {
+    // Create message element
     const li = document.createElement('li');
-    li.innerHTML = `(${user}) ~ ${sources.length ? `<strong>${sources.length} documents</strong> ` : ''} ${text}`;
+    li.textContent = `(${user}) ~ `;
+    // Append RAG source if not empty
+    if (sources.length) {
+        const strong = document.createElement('strong');
+        strong.textContent = `${sources.length} documents`;
+        // Load documents window on click
+        strong.addEventListener('click', () => {
+            loadRAGDocuments(sources);
+        });
+        li.appendChild(strong);
+        li.append(' ');
+    }
+    // Append message text
+    li.append(text);
     messageList.appendChild(li);
     // Scroll down to message
     chatbotForm.scrollTop = chatbotForm.scrollHeight;
@@ -81,6 +93,29 @@ async function clearChat() {
         message.remove();
         await sleep(50);
     }
+}
+
+async function createDocumentsWindow() {
+    // Load document window
+    const res = await fetch('elements/documents_window.html');
+    const html = await res.text();
+    // Render the window
+    const container = document.querySelector('body .container');
+    container.insertAdjacentHTML('beforeend', html);
+    const documents = container.querySelector('.window.documents');
+    // On drag
+    documents.querySelector('.header').addEventListener('mousedown', (downEvent) => {
+        documents.dataset.isDragging = true;
+        const offsetY = downEvent.clientY - documents.offsetTop;
+        const offsetX = downEvent.clientX - documents.offsetLeft;
+        document.addEventListener('mousemove', (e) => onMouseMove(e, documents, offsetY, offsetX));
+        document.addEventListener('mouseup', () => onMouseUp(documents));
+    });
+    // On close
+    documents.querySelector('#close').addEventListener('click', () => {
+        documents.remove();
+    });
+    return documents
 }
 
 
@@ -142,6 +177,34 @@ async function queryBot(message) {
     }
 }
 
+async function loadRAGDocuments(ids) {
+    // Load document windows if doesn't exist
+    let documentWindow = document.querySelector('.window.documents');
+    if (!documentWindow) {
+        documentWindow = await createDocumentsWindow();
+    }
+
+    // Request documents to API
+    const params = new URLSearchParams();
+    ids.forEach(id => params.append('ids', id));
+    const response = await fetch(routeAPI + `/get_documents?${params}`);
+    const content = await response.json();
+
+    // Render documents
+    const filesList = documentWindow.querySelector('ul.files');
+    filesList.innerHTML = ''; // erase previous content
+    content.documents.forEach(doc => {
+        const li = document.createElement('li');
+        li.textContent = doc.name;
+        if (doc.url) {
+            const link = document.createElement('a');
+            link.textContent = 'voir';
+            link.href = doc.url;
+            li.appendChild(link);
+        }
+        filesList.appendChild(li);
+    })
+}
 
 
 
@@ -157,12 +220,12 @@ async function queryBot(message) {
 // On dragging the window
 titleBar.addEventListener('mousedown', (downEvent) => {
     if (isAction(terminal)) return;
-    isDragging = true;
+    terminal.dataset.isDragging = true;
     const offsetY = downEvent.clientY - terminal.offsetTop;
     const offsetX = downEvent.clientX - terminal.offsetLeft;
 
-    document.addEventListener('mousemove', (e) => onMouseMove(e, offsetY, offsetX));
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', (e) => onMouseMove(e, terminal, offsetY, offsetX));
+    document.addEventListener('mouseup', () => onMouseUp(terminal));
 });
 
 titleBar.addEventListener('dblclick', () => {

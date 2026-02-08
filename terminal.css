@@ -1,15 +1,10 @@
-.terminal {
+.window {
     position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 70%;
-    padding: 2px;
     background-color: rgb(8, 49, 217);
     border: solid 2px #012e7e;
     border-radius: 12px 12px 2px 2px;
+    padding: 2px;
     overflow: hidden;
-    
 
     * {
         text-decoration: none;
@@ -17,7 +12,6 @@
         border: none;
         padding: 0;
         margin: 0;
-        /* font-family: "Dogica Pixel"; */
         font-family: "IBM Plex Mono", monospace;
         font-weight: 400;
         font-size: 13px;
@@ -76,7 +70,19 @@
         display: flex;
         flex-direction: column;
         border: solid 2px #012e7e;
+    }
+}
 
+
+/* TERMINAL */
+
+.window.terminal {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+
+    .content {
         .menu {
             font-size: 0;
             margin: 2px;
@@ -174,6 +180,9 @@
                     border: solid 1px #aca899;
                     border-radius: 2px;
                 }
+                > li strong:hover {
+                    text-decoration: underline;
+                }
 
                 > li.error {
                     color: red;
@@ -203,7 +212,7 @@
     }
 }
 
-.terminal.minimized {
+.window.terminal.minimized {
     top: 0 !important;
     left: 50% !important;
     transform: translate(-50%, calc(100vh - 40px));
@@ -214,7 +223,7 @@
     }
 }
 
-.terminal.maximized {
+.window.terminal.maximized {
     width: 95vw;
     left: 50% !important;
     top: 5% !important;
@@ -224,6 +233,15 @@
     }
 }
 
+
+/* DOCUMENTS */
+
+.window.documents {
+    ul.files {
+        padding: 8px;
+        background-color: #F4F3F0;
+    }
+}
 
 
 
