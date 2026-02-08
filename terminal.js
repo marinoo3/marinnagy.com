@@ -61,13 +61,18 @@ function onMouseUp() {
 
 
 
-function addMessage(text, bot = false, sources = []) {
+function addMessage(text, user = 'you', sources = []) {
     const li = document.createElement('li');
-    const user = bot ? "(marin)" : "(you)";
-    li.innerHTML = `${user} ~ ${sources.length ? `<strong>${sources.length} documents</strong> ` : ''} ${text}`;
+    li.innerHTML = `(${user}) ~ ${sources.length ? `<strong>${sources.length} documents</strong> ` : ''} ${text}`;
     messageList.appendChild(li);
     // Scroll down to message
     chatbotForm.scrollTop = chatbotForm.scrollHeight;
+    return li
+}
+
+function displayError(error) {
+    const li = addMessage(error, 'system');
+    li.classList.add('error');
 }
 
 async function clearChat() {
@@ -90,7 +95,7 @@ async function createBotSession() {
         method: 'POST'
     });
     if (!response.ok) {
-        console.log("Error calling API");
+        displayError("Error: failed to create session");
         return
     }
 
@@ -109,7 +114,7 @@ async function clearBotSession() {
         })
     });
     if (!response.ok) {
-        console.log("Error calling API");
+        displayError("Error: failed to clear session");
         return
     }
 }
@@ -126,7 +131,7 @@ async function queryBot(message) {
         })
     });
     if (!response.ok) {
-        console.log("Error calling API");
+        displayError("Error: failed query chatbot");
         return
     }
 
@@ -231,10 +236,10 @@ menu.querySelectorAll('.elements > li').forEach(button => {
 // On chatbot submit
 chatbotForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    addMessage(input.value);
+    addMessage(input.value, 'you');
     queryBot(input.value).then(({ message, sources }) => {
         if (message) {
-            addMessage(message, true, sources);
+            addMessage(message, 'marin', sources);
         }
     })
     input.value = "";
