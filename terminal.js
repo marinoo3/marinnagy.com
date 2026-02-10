@@ -8,8 +8,7 @@ const input = chatbotForm.querySelector('input#prompt');
 
 let sessionId = null;
 
-// const routeServer = "https://marinooo-me-exe.hf.space";
-const routeServer = "http://127.0.0.1:8000";
+const routeServer = "https://marinooo-me-exe.hf.space";
 const routeAPI = routeServer + "/api";
 
 // Sleep function
