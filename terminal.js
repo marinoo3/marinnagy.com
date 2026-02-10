@@ -204,6 +204,10 @@ async function loadRAGDocuments(contextId) {
         const distance = document.createElement('td');
         distance.textContent = chunk.distance;
         tr.appendChild(distance);
+        // chunk score
+        const score = document.createElement('td');
+        score.textContent = chunk.score;
+        tr.appendChild(score);
         // source url
         const link = document.createElement('td');
         tr.appendChild(link);
