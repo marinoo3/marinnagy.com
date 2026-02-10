@@ -237,9 +237,16 @@
 /* DOCUMENTS */
 
 .window.documents {
-    ul.files {
-        padding: 8px;
+    table.files {
+        margin: 4px;
         background-color: #F4F3F0;
+        border-collapse: collapse;
+    }
+
+    table.files th,
+    table.files td {
+        border: 1px solid #aca899; 
+        padding: 0 8px;
     }
 }
 

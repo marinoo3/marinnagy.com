@@ -59,17 +59,17 @@ function onMouseUp(window) {
     document.removeEventListener('mouseup', onMouseUp);
 };
 
-function addMessage(text, user = 'you', sources = []) {
+function addMessage(text, user = 'you', context = null) {
     // Create message element
     const li = document.createElement('li');
     li.textContent = `(${user}) ~ `;
-    // Append RAG source if not empty
-    if (sources.length) {
+    // Append RAG context if exists
+    if (context?.id) {
         const strong = document.createElement('strong');
-        strong.textContent = `${sources.length} documents`;
+        strong.textContent = `${context.length} documents`;
         // Load documents window on click
         strong.addEventListener('click', () => {
-            loadRAGDocuments(sources);
+            loadRAGDocuments(context.id);
         });
         li.appendChild(strong);
         li.append(' ');
@@ -173,11 +173,11 @@ async function queryBot(message) {
     const content = await response.json();
     return {
         message: content.response,
-        sources: content.sources
+        context: content.context
     }
 }
 
-async function loadRAGDocuments(ids) {
+async function loadRAGDocuments(contextId) {
     // Load document windows if doesn't exist
     let documentWindow = document.querySelector('.window.documents');
     if (!documentWindow) {
@@ -186,23 +186,34 @@ async function loadRAGDocuments(ids) {
 
     // Request documents to API
     const params = new URLSearchParams();
-    ids.forEach(id => params.append('ids', id));
-    const response = await fetch(routeAPI + `/get_documents?${params}`);
+    params.append('session_id', sessionId);
+    params.append('context_id', contextId);
+    const response = await fetch(routeAPI + `/get_context?${params}`);
     const content = await response.json();
 
     // Render documents
-    const filesList = documentWindow.querySelector('ul.files');
-    filesList.innerHTML = ''; // erase previous content
-    content.documents.forEach(doc => {
-        const li = document.createElement('li');
-        li.textContent = doc.name;
-        if (doc.url) {
-            const link = document.createElement('a');
-            link.textContent = 'voir';
-            link.href = doc.url;
-            li.appendChild(link);
+    const filesTable = documentWindow.querySelector('.files tbody');
+    filesTable.innerHTML = ''; // erase previous content
+    content.chunks.forEach(chunk => {
+        const tr = document.createElement('tr');
+        // source name
+        const name = document.createElement('td');
+        name.textContent = chunk.source.name;
+        tr.appendChild(name);
+        // chunk distance
+        const distance = document.createElement('td');
+        distance.textContent = chunk.distance;
+        tr.appendChild(distance);
+        // source url
+        const link = document.createElement('td');
+        tr.appendChild(link);
+        if (chunk.source.url) {
+            const a = document.createElement('a')
+            a.textContent = 'voir';
+            a.href = chunk.source.url;
+            link.appendChild(a);
         }
-        filesList.appendChild(li);
+        filesTable.appendChild(tr);
     })
 }
 
@@ -300,9 +311,9 @@ menu.querySelectorAll('.elements > li').forEach(button => {
 chatbotForm.addEventListener('submit', (e) => {
     e.preventDefault();
     addMessage(input.value, 'you');
-    queryBot(input.value).then(({ message, sources }) => {
+    queryBot(input.value).then(({ message, context }) => {
         if (message) {
-            addMessage(message, 'marin', sources);
+            addMessage(message, 'marin', context);
         }
     })
     input.value = "";
