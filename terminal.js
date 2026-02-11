@@ -153,6 +153,30 @@ async function clearBotSession() {
     }
 }
 
+async function downloadBotSession(format) {
+    // Request conversation file to API
+    const params = new URLSearchParams();
+    params.append('session_id', sessionId);
+    params.append('format', format);
+    const response = await fetch(routeAPI + `/download_session?${params}`);
+    if (!response.ok) displayError('Failed to download conversation');
+
+    // Create file
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const fileName = `session_${sessionId}.${format}`;
+
+    // Download file
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = fileName;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(blobUrl);
+}
+
 async function queryBot(message) {
     const response = await fetch(routeAPI + '/send', {
         method: 'POST',
@@ -214,6 +238,7 @@ async function loadRAGDocuments(contextId) {
             const a = document.createElement('a')
             a.textContent = 'voir';
             a.href = chunk.source.url;
+            a.target = '_blank';
             link.appendChild(a);
         }
         filesTable.appendChild(tr);
@@ -302,6 +327,12 @@ menu.querySelectorAll('.elements > li').forEach(button => {
             break
         case 'huggingface':
             button.onclick = () => window.open('https://huggingface.co/spaces/marinooo/me.exe', target='_blank');
+            break
+        case 'save-txt':
+            button.onclick = () => downloadBotSession('txt');
+            break
+        case 'save-json':
+            button.onclick = () => downloadBotSession('json');
             break
     }
 });
