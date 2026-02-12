@@ -8,7 +8,8 @@ const input = chatbotForm.querySelector('input#prompt');
 
 let sessionId = null;
 
-const routeServer = "https://marinooo-me-exe.hf.space";
+// const routeServer = "https://marinooo-me-exe.hf.space";
+const routeServer = "http://127.0.0.1:8000";
 const routeAPI = routeServer + "/api";
 
 // Sleep function
@@ -94,7 +95,31 @@ async function clearChat() {
     }
 }
 
-async function createDocumentsWindow() {
+async function createProjectionWindow() {
+    console.log('hello');
+    // Load projection window
+    const res = await fetch('elements/projection_window.html');
+    const html = await res.text();
+    // Render the window
+    const container = document.querySelector('body .container');
+    container.insertAdjacentHTML('beforeend', html);
+    const projection = container.querySelector('.window.projection');
+    // On drag
+    projection.querySelector('.header').addEventListener('mousedown', (downEvent) => {
+        projection.dataset.isDragging = true;
+        const offsetY = downEvent.clientY - projection.offsetTop;
+        const offsetX = downEvent.clientX - projection.offsetLeft;
+        document.addEventListener('mousemove', (e) => onMouseMove(e, projection, offsetY, offsetX));
+        document.addEventListener('mouseup', () => onMouseUp(projection));
+    });
+    // On close
+    projection.querySelector('#close').addEventListener('click', () => {
+        projection.remove();
+    });
+    return projection
+}
+
+async function createDocumentsWindow(contextId) {
     // Load document window
     const res = await fetch('elements/documents_window.html');
     const html = await res.text();
@@ -110,6 +135,10 @@ async function createDocumentsWindow() {
         document.addEventListener('mousemove', (e) => onMouseMove(e, documents, offsetY, offsetX));
         document.addEventListener('mouseup', () => onMouseUp(documents));
     });
+    // On project clicked
+    documents.querySelector('button#project').addEventListener('click', () => {
+        loadRAGProjection(contextId);
+    })
     // On close
     documents.querySelector('#close').addEventListener('click', () => {
         documents.remove();
@@ -200,11 +229,30 @@ async function queryBot(message) {
     }
 }
 
+async function loadRAGProjection(contextId) {
+    // Load document windows if doesn't exist
+    let projectionWindow = document.querySelector('.window.projection');
+    if (!projectionWindow) {
+        projectionWindow = await createProjectionWindow();
+    }
+    
+    // Request documents to API
+    const params = new URLSearchParams();
+    params.append('session_id', sessionId);
+    params.append('context_id', contextId);
+    const response = await fetch(routeAPI + `/plot_context?${params}`);
+    const content = await response.json();
+    
+    const plotContainer = projectionWindow.querySelector('#projection-plot');
+    const fig = JSON.parse(content['3d_scatter']);
+    await Plotly.newPlot(plotContainer, fig.data, fig.layout, { responsive: true });
+}
+
 async function loadRAGDocuments(contextId) {
     // Load document windows if doesn't exist
     let documentWindow = document.querySelector('.window.documents');
     if (!documentWindow) {
-        documentWindow = await createDocumentsWindow();
+        documentWindow = await createDocumentsWindow(contextId);
     }
 
     // Request documents to API

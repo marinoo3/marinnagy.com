@@ -71,6 +71,21 @@
         flex-direction: column;
         border: solid 2px #012e7e;
     }
+
+    button {
+        margin: 4px;
+        padding: 4px;
+        border-top: 2px solid #ffffff;
+        border-left: 2px solid #ffffff;
+        border-bottom: 2px solid #716f64;
+        border-right: 2px solid #716f64;
+    }
+    button:active {
+        border-top-color: #716f64;
+        border-left-color: #716f64;
+        border-bottom-color: #ece9d8;
+        border-right-color: #ece9d8;
+    }
 }
 
 
@@ -247,6 +262,46 @@
     table.files td {
         border: 1px solid #aca899; 
         padding: 0 8px;
+    }
+
+    table.files th {
+        font-weight: 700;
+    }
+
+    button {
+        margin-top: 0;
+    }
+}
+
+/* PROJECTION */
+
+.window.projection {
+    .content {
+        height: 250px;
+        width: 250px;
+        overflow: hidden;
+    }
+
+    #projection-plot {
+        .modebar-container {
+            display: none
+        }
+
+        .svg-container {
+            transform-origin: top left;
+            image-rendering: pixelated;
+            transform: scale(4);
+        }
+
+        .infolayer {
+            transform: scale(0.25);
+            transform-origin: top right;
+        }
+
+        .legendpoints .scatterpts {
+            transform: scale(4) translateX(6px);
+            stroke-width: .3px !important;
+        }
     }
 }
 
